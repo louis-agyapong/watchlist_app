@@ -33,5 +33,5 @@ class MovieSerializer(serializers.ModelSerializer):
             """
             Check if the title and description are not the same.
             """
-            raise serializers.ValidationError("Title cannot be same as description.")
+            raise serializers.ValidationError("Title and Description should be different.")
         return data
