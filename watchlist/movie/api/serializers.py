@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from watchlist.movie.models import Movie
 import datetime
+
+from rest_framework import serializers
+from watchlist.movie.models import Movie, StreamingPlatform
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -35,3 +36,16 @@ class MovieSerializer(serializers.ModelSerializer):
             """
             raise serializers.ValidationError("Title and Description should be different.")
         return data
+
+
+class StreamingPlatformSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the StreamingPlatform model.
+    """
+
+    movies = MovieSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = StreamingPlatform
+        fields = ("id", "name", "about", "website", "movies")
+        read_only_fields = ("id",)

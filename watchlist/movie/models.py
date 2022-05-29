@@ -1,13 +1,35 @@
+import datetime
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-import datetime
+
+
+class StreamingPlatform(models.Model):
+    name = models.CharField(_("Name"), max_length=255, unique=True)
+    about = models.TextField(_("About"), blank=True)
+    website = models.URLField(_("URL"), max_length=255)
+
+    class Meta:
+        verbose_name = _("Streaming Platform")
+        verbose_name_plural = _("Streaming Platforms")
+
+    def __str__(self):
+        return self.name
 
 
 class Movie(models.Model):
     title = models.CharField(_("Title"), max_length=100)
     description = models.TextField(_("Description"), blank=True)
     release_date = models.DateField(_("Release date"), blank=True, null=True)
+    platform = models.ForeignKey(
+        "movie.StreamingPlatform",
+        verbose_name=_("Platform"),
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="movies",
+    )
     active = models.BooleanField(_("Active"), default=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
