@@ -6,6 +6,7 @@ from http import HTTPStatus
 
 from .serializers import MovieSerializer
 
+
 @api_view(["GET", "POST"])
 def movies(request):
     """
@@ -30,17 +31,17 @@ def movie_detail(request, pk):
     """
     movie = get_object_or_404(Movie, pk=pk)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+    elif request.method == "PUT":
         serializer = MovieSerializer(movie, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         movie.delete()
         return Response(status=HTTPStatus.NO_CONTENT)
