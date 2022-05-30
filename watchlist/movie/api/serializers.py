@@ -1,7 +1,18 @@
 import datetime
 
 from rest_framework import serializers
-from watchlist.movie.models import Movie, StreamingPlatform
+from watchlist.movie.models import Movie, Review, StreamingPlatform
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Review model.
+    """
+
+    class Meta:
+        model = Review
+        fields = ("id", "movie", "rating", "description", "active", "created_at", "updated_at")
+        read_only_fields = ("created_at", "updated_at", "id")
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -9,9 +20,11 @@ class MovieSerializer(serializers.ModelSerializer):
     Serializer for the Movie model.
     """
 
+    reviews = ReviewSerializer(many=True, read_only=True)
+
     class Meta:
         model = Movie
-        fields = ("id", "title", "description", "release_date", "active", "created_at", "updated_at")
+        fields = ("id", "title", "description", "reviews", "release_date", "active", "created_at", "updated_at")
         read_only_fields = ("created_at", "updated_at", "id")
 
     def validate_title(self, value):

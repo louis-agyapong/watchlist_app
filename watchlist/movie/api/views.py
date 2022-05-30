@@ -3,9 +3,9 @@ from http import HTTPStatus
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
-from watchlist.movie.models import Movie, StreamingPlatform
+from watchlist.movie.models import Movie, Review, StreamingPlatform
 
-from .serializers import MovieSerializer, StreamingPlatformSerializer
+from .serializers import MovieSerializer, ReviewSerializer, StreamingPlatformSerializer
 
 
 @api_view(["GET", "POST"])
@@ -87,4 +87,46 @@ class StreamDetail(APIView):
     def delete(self, request, pk):
         streaming_platform = get_object_or_404(StreamingPlatform, pk=pk)
         streaming_platform.delete()
+        return Response(status=HTTPStatus.NO_CONTENT)
+
+
+class ReviewList(APIView):
+    """
+    View to list all reviews or create a new one.
+    """
+
+    def get(self, request):
+        reviews = Review.objects.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTPStatus.CREATED)
+        return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
+
+
+class ReviewDetail(APIView):
+    """
+    View to retrieve, update or delete a review.
+    """
+
+    def get(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        serializer = ReviewSerializer(review, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
+
+    def delete(self, request, pk):
+        review = get_object_or_404(Review, pk=pk)
+        review.delete()
         return Response(status=HTTPStatus.NO_CONTENT)
