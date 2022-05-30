@@ -73,4 +73,4 @@ class Review(models.Model):
         verbose_name_plural = _("Reviews")
 
     def __str__(self) -> str:
-        return f"{self.movie.title} - {self.rating}/5"
+        return f"{self.movie.title} - {str(self.rating)}/5"
