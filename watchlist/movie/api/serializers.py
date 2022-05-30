@@ -43,7 +43,10 @@ class StreamingPlatformSerializer(serializers.ModelSerializer):
     Serializer for the StreamingPlatform model.
     """
 
-    movies = MovieSerializer(many=True, read_only=True)
+    # movies = MovieSerializer(many=True, read_only=True)
+    # movies = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # movies = serializers.StringRelatedField(many=True)
+    movies = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="movie-detail")
 
     class Meta:
         model = StreamingPlatform

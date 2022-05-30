@@ -55,7 +55,7 @@ class Stream(APIView):
 
     def get(self, request):
         streaming_platforms = StreamingPlatform.objects.all()
-        serializer = StreamingPlatformSerializer(streaming_platforms, many=True)
+        serializer = StreamingPlatformSerializer(streaming_platforms, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
