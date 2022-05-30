@@ -1,6 +1,7 @@
 import datetime
 
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -52,3 +53,24 @@ class Movie(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Review(models.Model):
+    movie = models.ForeignKey(
+        "movie.Movie",
+        verbose_name=_("Movie"),
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    rating = models.PositiveSmallIntegerField(_("Rating"), validators=[MinValueValidator(1), MaxValueValidator(5)])
+    description = models.TextField(_("Description"), blank=True)
+    active = models.BooleanField(_("Active"), default=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Review")
+        verbose_name_plural = _("Reviews")
+
+    def __str__(self) -> str:
+        return f"{self.movie.title} - {self.rating}/5"
