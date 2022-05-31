@@ -130,3 +130,22 @@ class ReviewDetail(APIView):
         review = get_object_or_404(Review, pk=pk)
         review.delete()
         return Response(status=HTTPStatus.NO_CONTENT)
+
+
+class MovieReview(APIView):
+    """
+    View to retrieve, update or delete a review.
+    """
+
+    def get(self, request, pk):
+        movie = get_object_or_404(Movie, pk=pk)
+        reviews = Review.objects.filter(movie=movie)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=HTTPStatus.OK)
+
+    def post(self, request, pk):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=HTTPStatus.CREATED)
+        return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
