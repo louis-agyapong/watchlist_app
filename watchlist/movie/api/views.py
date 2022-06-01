@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import APIView, api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
 
@@ -94,7 +95,7 @@ class ReviewList(APIView):
     """
     View to list all reviews or create a new one.
     """
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
