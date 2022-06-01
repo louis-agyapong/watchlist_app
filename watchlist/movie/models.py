@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 
 class StreamingPlatform(models.Model):
@@ -62,6 +63,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name="reviews",
     )
+    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.SET_NULL, blank=True, null=True)
     rating = models.PositiveSmallIntegerField(_("Rating"), validators=[MinValueValidator(1), MaxValueValidator(5)])
     description = models.TextField(_("Description"), blank=True)
     active = models.BooleanField(_("Active"), default=True)
