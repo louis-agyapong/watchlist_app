@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Local apps
     "watchlist.movie",
+    "watchlist.myapp",
     # External apps that go after the django apps
     "django_extensions",
     "rest_framework",
