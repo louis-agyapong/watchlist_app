@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
 
 from .serializers import MovieSerializer, ReviewSerializer, StreamingPlatformSerializer
-
+from .permissions import AdminOrReadOnly
 
 @api_view(["GET", "POST"])
 def movies(request):
@@ -113,6 +113,8 @@ class ReviewDetail(APIView):
     """
     View to retrieve, update or delete a review.
     """
+
+    permission_classes = [AdminOrReadOnly]
 
     def get(self, request, pk):
         review = get_object_or_404(Review, pk=pk)
