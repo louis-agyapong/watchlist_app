@@ -8,10 +8,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     """
     Serializer for the Review model.
     """
+    user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review
-        fields = ("id", "movie", "rating", "description", "active", "created_at", "updated_at")
+        fields = ("id", "movie", "rating", "description", "user", "active", "created_at", "updated_at")
         read_only_fields = ("created_at", "updated_at", "id")
 
 

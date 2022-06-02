@@ -1,13 +1,6 @@
 from rest_framework import permissions
 
 
-class AnonPermissionOnly(permissions.BasePermission):
-    """Allow only anonymous users to access this endpoint"""
-
-    def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated)
-
-
 class AdminOrReadOnly(permissions.IsAdminUser):
     """Allow admin users to edit data, non-admin users to read"""
 
@@ -24,4 +17,4 @@ class ReviewUserOrReadOnly(permissions.BasePermission):
             # Read permissions are allowed to any request,
             return True
 
-        return obj.review_user == request.user
+        return obj.user == request.user

@@ -2,12 +2,13 @@ from http import HTTPStatus
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import APIView, api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
 
+from .permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 from .serializers import MovieSerializer, ReviewSerializer, StreamingPlatformSerializer
-from .permissions import AdminOrReadOnly
+
 
 @api_view(["GET", "POST"])
 def movies(request):
@@ -95,7 +96,7 @@ class ReviewList(APIView):
     """
     View to list all reviews or create a new one.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request):
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
@@ -114,7 +115,7 @@ class ReviewDetail(APIView):
     View to retrieve, update or delete a review.
     """
 
-    permission_classes = [AdminOrReadOnly]
+    permission_classes = [ReviewUserOrReadOnly]
 
     def get(self, request, pk):
         review = get_object_or_404(Review, pk=pk)
