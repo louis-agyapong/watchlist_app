@@ -104,6 +104,9 @@ class ReviewList(APIView):
 
     def post(self, request):
         serializer = ReviewSerializer(data=request.data)
+        user = request.user
+        pk = request.data.get("movie")
+        review_queryset = Review.objects.filter(user=user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=HTTPStatus.CREATED)
