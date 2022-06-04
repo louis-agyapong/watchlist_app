@@ -8,7 +8,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     """
     Serializer for the Review model.
     """
-    user = serializers.StringRelatedField(read_only=True)
+
+    # user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review
@@ -25,7 +26,18 @@ class MovieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movie
-        fields = ("id", "title", "description", "reviews", "release_date", "active", "created_at", "updated_at")
+        fields = (
+            "id",
+            "title",
+            "description",
+            "reviews",
+            "average_rating",
+            "number_ratings",
+            "release_date",
+            "active",
+            "created_at",
+            "updated_at",
+        )
         read_only_fields = ("created_at", "updated_at", "id")
 
     def validate_title(self, value):

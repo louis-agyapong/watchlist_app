@@ -2,11 +2,12 @@ from http import HTTPStatus
 
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import APIView, api_view
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
+from django.core.exceptions import ValidationError
 
-from .permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from .permissions import ReviewUserOrReadOnly
 from .serializers import MovieSerializer, ReviewSerializer, StreamingPlatformSerializer
 
 
@@ -96,7 +97,9 @@ class ReviewList(APIView):
     """
     View to list all reviews or create a new one.
     """
+
     permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
@@ -104,9 +107,6 @@ class ReviewList(APIView):
 
     def post(self, request):
         serializer = ReviewSerializer(data=request.data)
-        user = request.user
-        pk = request.data.get("movie")
-        review_queryset = Review.objects.filter(user=user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=HTTPStatus.CREATED)
@@ -141,7 +141,7 @@ class ReviewDetail(APIView):
 
 class MovieReview(APIView):
     """
-    View to retrieve, update or delete a review.
+    Movie review list and create.
     """
 
     def get(self, request, pk):
@@ -151,8 +151,23 @@ class MovieReview(APIView):
         return Response(serializer.data, status=HTTPStatus.OK)
 
     def post(self, request, pk):
+        """ "
+        create a new review for a movie with the given pk in the url.
+        """
+        movie = get_object_or_404(Movie, pk=pk)
+        review_user = request.user
+        review_queryset = Review.objects.filter(movie=movie, user=review_user)
         serializer = ReviewSerializer(data=request.data)
+
+        if review_queryset.exists():
+            return Response({"message": "You have already reviewed this movie."}, status=HTTPStatus.BAD_REQUEST)
         if serializer.is_valid():
-            serializer.save()
+            if movie.number_ratings == 0:
+                movie.average_rating = serializer.validated_data["rating"]
+            else:
+                movie.average_rating = (movie.average_rating + serializer.validated_data["rating"]) / 2
+            movie.number_ratings = movie.number_ratings + 1
+            movie.save()
+            serializer.save(movie=movie, user=review_user)
             return Response(serializer.data, status=HTTPStatus.CREATED)
         return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)

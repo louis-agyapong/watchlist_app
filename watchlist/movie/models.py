@@ -32,6 +32,8 @@ class Movie(models.Model):
         null=True,
         related_name="movies",
     )
+    average_rating = models.FloatField(_("Average Rating"), default=0)
+    number_ratings = models.PositiveIntegerField(_("Number of ratings"), default=0)
     active = models.BooleanField(_("Active"), default=True)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
