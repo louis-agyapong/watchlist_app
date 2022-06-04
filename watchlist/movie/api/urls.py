@@ -8,5 +8,5 @@ urlpatterns = [
     path("streams/<int:pk>/", views.StreamDetail.as_view(), name="stream-detail"),
     path("reviews/", views.ReviewList.as_view(), name="reviews"),
     path("reviews/<int:pk>/", views.ReviewDetail.as_view(), name="review-detail"),
-    path("movies/<int:pk>/reviews/", views.MovieReview.as_view(), name="movie-revies"),
+    path("movies/<int:pk>/reviews/", views.MovieReview.as_view(), name="movie-reviews"),
 ]
