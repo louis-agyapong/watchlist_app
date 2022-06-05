@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
-from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import APIView, api_view
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
 
@@ -143,6 +142,8 @@ class MovieReview(APIView):
     """
     Movie review list and create.
     """
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         movie = get_object_or_404(Movie, pk=pk)
