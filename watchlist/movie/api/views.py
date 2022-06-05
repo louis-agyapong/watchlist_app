@@ -161,6 +161,9 @@ class MovieReview(APIView):
 
         if review_queryset.exists():
             return Response({"message": "You have already reviewed this movie."}, status=HTTPStatus.BAD_REQUEST)
+
+        print(serializer.is_valid())
+
         if serializer.is_valid():
             if movie.number_ratings == 0:
                 movie.average_rating = serializer.validated_data["rating"]
@@ -168,6 +171,7 @@ class MovieReview(APIView):
                 movie.average_rating = (movie.average_rating + serializer.validated_data["rating"]) / 2
             movie.number_ratings = movie.number_ratings + 1
             movie.save()
+            print(movie)
             serializer.save(movie=movie, user=review_user)
             return Response(serializer.data, status=HTTPStatus.CREATED)
         return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
