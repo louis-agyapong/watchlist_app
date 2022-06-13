@@ -3,6 +3,7 @@ from http import HTTPStatus
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import RegistrationSerializer
 
@@ -18,8 +19,16 @@ def registration_view(request):
             data["username"] = user.username
             data["email"] = user.email
 
-            token = Token.objects.get(user=user).key
-            data["token"] = token
+            # token = Token.objects.get(user=user).key
+            # data["token"] = token
+            refresh = RefreshToken.for_user(user)
+            data["token"] = {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
+        # else:
+        #     data = serializer.errors
+        # return Response(data)
             return Response(data, status=HTTPStatus.CREATED)
         return Response(data=serializer.errors, status=HTTPStatus.BAD_REQUEST)
 
