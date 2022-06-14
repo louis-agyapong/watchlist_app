@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.decorators import APIView, api_view
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from watchlist.movie.models import Movie, Review, StreamingPlatform
 
@@ -90,6 +90,17 @@ class StreamDetail(APIView):
         streaming_platform = get_object_or_404(StreamingPlatform, pk=pk)
         streaming_platform.delete()
         return Response(status=HTTPStatus.NO_CONTENT)
+
+
+class UserReviews(APIView):
+    """
+    View to list all user reviews.
+    """
+
+    def get(self, request, username):
+        user_reviews = get_list_or_404(Review, user__username=username)
+        serializer = ReviewSerializer(user_reviews, many=True)
+        return Response(serializer.data)
 
 
 class ReviewList(APIView):
