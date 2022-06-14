@@ -9,5 +9,6 @@ urlpatterns = [
     path("reviews/", views.ReviewList.as_view(), name="reviews"),
     path("reviews/<int:pk>/", views.ReviewDetail.as_view(), name="review-detail"),
     path("movies/reviews/<str:username>/", views.UserReviews.as_view(), name="user-reviews"),
+    path("movies/reviews/", views.QueryUserReviews.as_view(), name="query-user-reviews"),
     path("movies/<int:pk>/reviews/", views.MovieReview.as_view(), name="movie-reviews"),
 ]

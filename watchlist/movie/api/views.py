@@ -103,6 +103,19 @@ class UserReviews(APIView):
         return Response(serializer.data)
 
 
+class QueryUserReviews(APIView):
+    """
+    View to query user reviews.
+    """
+
+    def get(self, request):
+        username = request.query_params.get("username")
+        if username is not None:
+            user_reviews = get_list_or_404(Review, user__username=username)
+            serializer = ReviewSerializer(user_reviews, many=True)
+            return Response(serializer.data)
+
+
 class ReviewList(APIView):
     """
     View to list all reviews or create a new one.
